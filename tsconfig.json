@@ -1,0 +1,1 @@
+{"compilerOptions":{"target":"ES2020","module":"none","strict":false,"outDir":"dist","lib":["DOM","DOM.Iterable","ES2020"],"skipLibCheck":true},"include":["*.ts","globals.d.ts"]}

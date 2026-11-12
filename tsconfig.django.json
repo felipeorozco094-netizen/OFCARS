@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "none",
+    "strict": true,
+    "rootDir": "inventario/ts",
+    "outDir": "inventario/static/inventario/js",
+    "lib": ["DOM", "ES2020"],
+    "skipLibCheck": true
+  },
+  "include": ["inventario/ts/**/*.ts"]
+}

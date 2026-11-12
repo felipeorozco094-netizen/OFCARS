@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Publicar vehículo | OF_Cars</title>
+    <link rel="stylesheet" href="CSS_C.Orozco.css">
+    <script src="dist/carga-vehiculo.js" defer></script>
+</head>
+<body class="pagina-admin">
+    <header class="encabezado">
+        <div class="izq">
+        <img class="imagen" src="imagenes/carrrr.png" alt=""><a class="marca-enlace" href="index.html">
+        <h1 class="titulo1">OF_Cars</h1>
+        </a>
+    </div>
+    <nav class="enlaces">
+        <ul><li><a href="admin.html">Panel</a></li>
+            <li><a href="index.html">Ver sitio</a></li>
+            <li><a href="loginCO.html">Cerrar sesión</a>
+            </li>
+        </ul>
+    </nav>
+    </header>
+    <main class="admin-contenedor carga-contenedor">
+        <a class="volver-catalogo" href="admin.html">← Volver al panel</a>
+        <div class="admin-bienvenida">
+            <div>
+                <p class="admin-ceja">INVENTARIO</p>
+                <h2>Publica un vehículo</h2>
+                <p>Completa la información y agrega las fotos.</p>
+            </div>
+            <span class="paso-indicador">Información + fotos</span>
+        </div>
+        <p class="aviso-demo">Esta maqueta guarda los anuncios en este navegador. Al conectar Python, se guardarán en la base de datos.</p>
+        <form id="form-vehiculo" class="form-vehiculo">
+            <section class="panel-admin formulario-seccion">
+                <div class="form-seccion-titulo">
+                    <span class="numero-paso">1</span>
+                    <div>
+                        <h3>Información del vehículo</h3>
+                        <p>Cuéntales a los compradores qué estás ofreciendo.</p>
+                    </div>
+                </div>
+                <div class="form-grid">
+                    <label class="campo-form">
+                        <span>Tipo de vehículo <b>*</b>
+                        </span>
+                        <select name="tipo" required><option value="">Selecciona una categoría</option><option>Carro</option><option>Camioneta</option><option>Camión</option><option>Otro</option></select>
+                    </label>
+                    <label class="campo-form">
+                        <span>Marca <b>*</b>
+                        </span>
+                        <input name="marca" id="marca" required placeholder="Ej. Toyota">
+                    </label>
+                    <label class="campo-form">
+                        <span>Modelo <b>*</b>
+                        </span>
+                        <input name="modelo" id="modelo" required placeholder="Ej. Land Cruiser">
+                    </label>
+                    <label class="campo-form">
+                        <span>Año <b>*</b>
+                        </span>
+                        <input name="anio" id="anio" type="number" min="1950" max="2099" required placeholder="2022">
+                    </label>
+                    <label class="campo-form">
+                        <span>Precio (COP) <b>*</b>
+                        </span>
+                        <div class="entrada-prefijo">
+                            <span>$</span>
+                            <input name="precio" id="precio" type="number" min="0" required placeholder="85000000">
+                        </div>
+                    </label>
+                    <label class="campo-form">
+                        <span>Kilometraje</span>
+                        <input name="kilometraje" type="number" min="0" placeholder="Ej. 45000">
+                    </label>
+                    <label class="campo-form">
+                        <span>Combustible</span>
+                        <select name="combustible">
+                            <option value="">Selecciona</option>
+                            <option>Gasolina</option>
+                            <option>Diésel</option>
+                            <option>Híbrido</option>
+                            <option>Eléctrico</option>
+                            <option>Gas</option>
+                        </select>
+                    </label>
+                    <label class="campo-form">
+                        <span>Transmisión</span>
+                        <select name="transmision">
+                            <option value="">Selecciona</option>
+                            <option>Manual</option>
+                            <option>Automática</option>
+                        </select>
+                    </label>
+                    <label class="campo-form">
+                        <span>Color</span>
+                        <input name="color" placeholder="Ej. Gris plata"></label>
+                        <label class="campo-form campo-completo">
+                            <span>Descripción</span>
+                            <textarea name="descripcion" id="descripcion" rows="4" placeholder="Estado, equipamiento y detalles importantes.">                                
+                            </textarea>
+                        </label>
+                    </div>
+                </section>
+                <section class="panel-admin formulario-seccion">
+                    <div class="form-seccion-titulo">
+                        <span class="numero-paso">2       
+                        </span>
+                        <div>
+                            <h3>Fotos del vehículo</h3>
+                            <p>Agrega varias fotos claras desde distintos ángulos.</p>
+                        </div>
+                    </div>
+                    <label class="zona-fotos" id="zona-fotos" for="fotos">
+                        <input id="fotos" name="fotos" type="file" accept="image/*" multiple>
+                        <span class="subir-icono">↑</span>
+                        <strong>Arrastra tus fotos aquí</strong>
+                        <span>o haz clic para elegirlas desde tu equipo</span>
+                        <small>JPG, PNG o WEBP · Puedes seleccionar varias</small>
+                    </label>
+                    
+                    <div id="lista-fotos" class="lista-fotos" aria-live="polite">                   
+                    </div>
+                </section>
+        <div class="acciones-formulario">
+            <a class="boton-secundario" href="admin.html">Cancelar</a>
+            <button class="admin-accion" type="submit">Publicar vehículo <span>→</span>
+            </button>
+        </div>
+        <p id="mensaje-formulario" class="mensaje-formulario" role="status" aria-live="polite" hidden></p>
+        <section id="vista-previa-anuncio" class="panel-admin vista-previa-anuncio" hidden>
+            <p class="admin-ceja">VISTA PREVIA</p>
+            <h3 id="preview-titulo"></h3>
+            <p id="preview-descripcion"></p>
+            <strong id="preview-precio"></strong>
+            <div id="preview-fotos" class="lista-fotos">
+
+            </div>
+        </section>
+    </form>
+</main>
+<footer class="footer">
+    <div>
+        <h3>OF_Cars · Administración</h3>
+    </div>
+    <div>
+        <h3>Publicación de vehículos</h3>
+    </div>
+</footer>
+</body>
+</html>

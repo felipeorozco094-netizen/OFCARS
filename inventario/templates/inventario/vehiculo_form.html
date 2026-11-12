@@ -1,0 +1,31 @@
+{% extends 'inventario/base.html' %}
+{% load static %}
+{% block title %}{{ titulo }} | OF Cars{% endblock %}
+{% block body_class %}admin-page{% endblock %}
+{% block content %}
+<main class="admin-wrap form-wrap">
+    <a class="back-link" href="{% url 'inventario_admin' %}">← Volver al inventario</a>
+    <section class="dashboard-card editor-card">
+        <div class="form-heading"><p class="eyebrow">PUBLICACIÓN DEL VEHÍCULO</p><h1>{{ titulo }}</h1><p>Completa los datos y agrega las fotografías. La publicación se guardará al confirmar.</p></div>
+        <form method="post" enctype="multipart/form-data" class="vehicle-form" id="vehicle-form">
+            {% csrf_token %}
+            {% if form.non_field_errors %}<div class="form-errors">{{ form.non_field_errors }}</div>{% endif %}
+            <div class="form-fields">
+                {% for field in form %}<label class="field">{{ field.label }}{{ field }}{% if field.errors %}<span class="field-error">{{ field.errors|striptags }}</span>{% endif %}</label>{% endfor %}
+            </div>
+            <section class="photo-upload">
+                <label for="photo-input" class="upload-drop" id="upload-drop">
+                    <span class="upload-symbol">＋</span><strong>Selecciona o arrastra las fotos aquí</strong>
+                    <small>JPG, PNG o WEBP · máximo 8 MB por imagen · hasta 20 fotos</small>
+                    <input id="photo-input" type="file" name="fotos" accept="image/jpeg,image/png,image/webp" multiple {% if not vehiculo %}required{% endif %}>
+                </label>
+                {% if vehiculo and vehiculo.fotografia_set.all %}<p class="current-photos-label">Fotografías guardadas (se conservarán):</p><div class="photo-preview current-photos">{% for photo in vehiculo.fotografia_set.all %}<img src="{{ photo.url_imagen }}" alt="Foto existente {{ forloop.counter }}">{% endfor %}</div>{% endif %}
+                <div id="photo-preview" class="photo-preview" aria-live="polite"></div>
+                <p id="photo-count" class="upload-hint">No has seleccionado fotos nuevas.</p>
+            </section>
+            <div class="form-actions"><a class="button button-light" href="{% url 'inventario_admin' %}">Cancelar</a><button class="button button-red" type="submit">{{ titulo }}</button></div>
+        </form>
+    </section>
+</main>
+<script src="{% static 'inventario/js/vehiculo_upload.js' %}" defer></script>
+{% endblock %}

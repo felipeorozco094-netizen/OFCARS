@@ -1,0 +1,75 @@
+{% extends 'inventario/base.html' %}
+{% block title %}Vehículos disponibles | OF Cars{% endblock %}
+{% block content %}
+<main class="page-wrap">
+    <section class="hero">
+        <p class="eyebrow">OF_CARS · INVENTARIO SELECCIONADO</p>
+        <h1>Encuentra tu próximo vehículo</h1>
+        <p>Explora opciones y filtra el inventario del concesionario.</p>
+    </section>
+
+    <form class="filter-panel" method="get" action="{% url 'inicio' %}">
+        <div class="filter-grid">
+            <label class="field field-wide">Buscar por marca o modelo
+                <input type="search" name="q" value="{{ query }}" placeholder="Ej. Toyota Burbuja">
+            </label>
+            <label class="field">Tipo
+                <select name="tipo">
+                    <option value="">Todos los tipos</option>
+                    {% for value,label in tipo_choices %}<option value="{{ value }}" {% if tipo_seleccionado == value %}selected{% endif %}>{{ label }}</option>{% endfor %}
+                    {% if not tipo_choices %}
+                        <option value="Automóvil" {% if tipo_seleccionado == 'Automóvil' %}selected{% endif %}>Automóvil</option>
+                        <option value="Camioneta" {% if tipo_seleccionado == 'Camioneta' %}selected{% endif %}>Camioneta</option>
+                        <option value="SUV" {% if tipo_seleccionado == 'SUV' %}selected{% endif %}>SUV</option>
+                        <option value="Pickup" {% if tipo_seleccionado == 'Pickup' %}selected{% endif %}>Pickup</option>
+                        <option value="Camión" {% if tipo_seleccionado == 'Camión' %}selected{% endif %}>Camión</option>
+                    {% endif %}
+                </select>
+            </label>
+            <label class="field">Marca
+                <select name="marca"><option value="">Todas las marcas</option>{% for marca in marcas %}<option value="{{ marca.nombre }}" {% if valores_filtro.marca == marca.nombre %}selected{% endif %}>{{ marca.nombre }}</option>{% endfor %}</select>
+            </label>
+            <label class="field">Modelo
+                <input type="text" name="modelo" value="{{ valores_filtro.modelo }}" placeholder="Cualquier modelo">
+            </label>
+            <label class="field">Precio desde<input type="number" min="0" name="precio_min" value="{{ valores_filtro.precio_min }}" placeholder="$ mínimo"></label>
+            <label class="field">Precio hasta<input type="number" min="0" name="precio_max" value="{{ valores_filtro.precio_max }}" placeholder="$ máximo"></label>
+            <label class="field">Año desde<input type="number" min="1950" max="2100" name="anio_min" value="{{ valores_filtro.anio_min }}" placeholder="Año mínimo"></label>
+            <label class="field">Año hasta<input type="number" min="1950" max="2100" name="anio_max" value="{{ valores_filtro.anio_max }}" placeholder="Año máximo"></label>
+            <label class="field">Combustible
+                <select name="combustible"><option value="">Cualquiera</option><option {% if valores_filtro.combustible == 'Gasolina' %}selected{% endif %}>Gasolina</option><option {% if valores_filtro.combustible == 'Diésel' %}selected{% endif %}>Diésel</option><option {% if valores_filtro.combustible == 'Híbrido' %}selected{% endif %}>Híbrido</option><option {% if valores_filtro.combustible == 'Eléctrico' %}selected{% endif %}>Eléctrico</option><option {% if valores_filtro.combustible == 'Gas' %}selected{% endif %}>Gas</option></select>
+            </label>
+            <label class="field">Transmisión
+                <select name="transmision"><option value="">Cualquiera</option><option {% if valores_filtro.transmision == 'Manual' %}selected{% endif %}>Manual</option><option {% if valores_filtro.transmision == 'Automática' %}selected{% endif %}>Automática</option></select>
+            </label>
+        </div>
+        <div class="filter-actions">
+            <a class="button button-light" href="{% url 'inicio' %}">Limpiar</a>
+            <button class="button button-red" type="submit">Buscar vehículos</button>
+        </div>
+    </form>
+
+    <section class="inventory-section">
+        <div class="section-heading"><div><p class="eyebrow">INVENTARIO</p><h2>Vehículos disponibles</h2></div><span>{{ vehiculos|length }} resultados</span></div>
+        {% if vehiculos %}
+            <div class="vehicle-grid">
+                {% for vehiculo in vehiculos %}
+                    <a class="vehicle-card" href="{% url 'detalle_vehiculo' vehiculo.id_vehiculo %}">
+                        <div class="vehicle-photo">
+                            {% with photo=vehiculo.fotografia_set.all|first %}{% if photo %}<img src="{{ photo.image_url }}" alt="{{ vehiculo.modelo.marca.nombre }} {{ vehiculo.modelo.nombre }}">{% else %}<span>Foto próximamente</span>{% endif %}{% endwith %}
+                        </div>
+                        <div class="vehicle-info">
+                            <p class="vehicle-category">{{ vehiculo.tipo }} · {{ vehiculo.anio }}</p>
+                            <h3>{{ vehiculo.modelo.marca.nombre }} {{ vehiculo.modelo.nombre }}</h3>
+                            <p>{{ vehiculo.kilometraje|default:0 }} km · {{ vehiculo.combustible|default:'Combustible por confirmar' }}</p>
+                            <strong class="vehicle-price">${{ vehiculo.precio|floatformat:0 }}</strong>
+                        </div>
+                    </a>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state"><h3>No encontramos vehículos con esos filtros</h3><p>Prueba con otra marca, modelo o rango de precio.</p><a class="button button-red" href="{% url 'inicio' %}">Ver todo el inventario</a></div>
+        {% endif %}
+    </section>
+</main>
+{% endblock %}

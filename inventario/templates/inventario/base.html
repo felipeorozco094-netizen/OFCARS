@@ -1,0 +1,44 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="OF Cars, vehículos seleccionados para ti">
+    <title>{% block title %}OF Cars{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'inventario/css/site.css' %}">
+    <link rel="stylesheet" href="{% static 'inventario/css/CSS_C.Orozco.css' %}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body class="{% block body_class %}{% endblock %}">
+    <header class="site-header">
+        <a class="brand" href="{% url 'inicio' %}">OF<span>_</span>CARS</a>
+        <nav class="site-nav" aria-label="Navegación principal">
+            <a href="{% url 'inicio' %}">Vehículos</a>
+            {% if request.user.is_staff %}
+                <a href="{% url 'panel' %}">Panel</a>
+                <a href="{% url 'inventario_admin' %}">Inventario</a>
+                <form method="post" action="{% url 'salir' %}">
+                    {% csrf_token %}
+                    <button class="nav-button" type="submit">Cerrar sesión</button>
+                </form>
+            {% else %}
+                <a href="{% url 'acceso' %}">Acceso administrador</a>
+            {% endif %}
+        </nav>
+    </header>
+
+    {% if messages %}
+        <div class="messages" aria-live="polite">
+            {% for message in messages %}<p class="message message-{{ message.tags }}">{{ message }}</p>{% endfor %}
+        </div>
+    {% endif %}
+
+    {% block content %}{% endblock %}
+
+    <footer class="site-footer">
+        <span>OF_Cars · Compra con confianza</span>
+        <a href="{% url 'acceso' %}">Administración</a>
+    </footer>
+</body>
+</html>

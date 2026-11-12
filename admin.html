@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de administración | OF_Cars</title>
+    <link rel="stylesheet" href="CSS_C.Orozco.css">
+</head>
+<body class="pagina-admin">
+    <header class="encabezado">
+        <div class="izq">
+            <img class="imagen" src="imagenes/carrrr.png" alt="Logo de OF_Cars">
+            <a class="marca-enlace" href="index.html"><h1 class="titulo1">OF_Cars</h1></a>
+        </div>
+        <nav class="enlaces" aria-label="Navegación de administración">
+            <ul>
+                <li><a href="index.html">Ver sitio</a></li>
+                <li><a href="admin.html" aria-current="page">Panel</a></li>
+                <li><a href="subir-vehiculo.html">Publicar vehículo</a></li>
+                <li><a href="loginCO.html">Cerrar sesión</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main class="admin-contenedor">
+        <section class="admin-bienvenida">
+            <div>
+                <p class="admin-ceja">PANEL DEL CONCESIONARIO</p>
+                <h2>¡Hola, administrador!</h2>
+                <p>Este es el resumen de la actividad de tu concesionario.</p>
+            </div>
+            <a class="admin-accion" href="subir-vehiculo.html">＋ Publicar un vehículo</a>
+        </section>
+        <p class="aviso-demo">Datos guardados en este navegador. Al conectar Python, el panel usará la base de datos del concesionario.</p>
+        <section class="resumen-ventas" aria-label="Estadísticas de ventas">
+            <article class="kpi"><span>Ventas este mes</span><strong id="ventas-mes">0</strong><small>Ventas registradas</small></article>
+            <article class="kpi"><span>Ingresos por ventas</span><strong id="ingresos-mes">$0</strong><small>Valor bruto del mes</small></article>
+            <article class="kpi"><span>Comisión del concesionario</span><strong id="comision-mes">$0</strong><small>Comisión acumulada</small></article>
+            <article class="kpi"><span>Vehículos publicados</span><strong id="vehiculos-publicados">0</strong><small id="vehiculos-disponibles">0 disponibles</small></article>
+        </section>
+        <div class="admin-columnas">
+            <section class="panel-admin">
+                <div class="panel-titulo">
+                    <div><h3>Ventas de la semana</h3><p id="resumen-semana">Ingresos diarios · datos del navegador</p></div>
+                    <span class="etiqueta-demo">Esta semana</span>
+                </div>
+                <div class="grafico-barras" role="img" aria-label="Gráfico de ejemplo de lunes a domingo">
+                    <div class="barra-col"><span class="barra barra-48"></span><small>Lun</small></div>
+                    <div class="barra-col"><span class="barra barra-72"></span><small>Mar</small></div>
+                    <div class="barra-col"><span class="barra barra-42"></span><small>Mié</small></div>
+                    <div class="barra-col"><span class="barra barra-88"></span><small>Jue</small></div>
+                    <div class="barra-col"><span class="barra barra-62"></span><small>Vie</small></div>
+                    <div class="barra-col"><span class="barra barra-100"></span><small>Sáb</small></div>
+                    <div class="barra-col"><span class="barra barra-30"></span><small>Dom</small></div>
+                </div>
+            </section>
+            <section class="panel-admin accesos-panel">
+                <div class="panel-titulo"><div><h3>Accesos rápidos</h3><p>Administra tu inventario fácilmente</p></div></div>
+                <a class="acceso-admin" href="subir-vehiculo.html">
+                    <span class="acceso-icono">＋</span>
+                    <span><strong>Publicar vehículo</strong><small>Agrega información y fotografías</small></span><b>→</b>
+                </a>
+                <a class="acceso-admin" href="index.html#resultados">
+                    <span class="acceso-icono">▧</span>
+                    <span><strong>Ver inventario</strong><small>Consulta los vehículos publicados</small></span><b>→</b>
+                </a>
+            </section>
+        </div>
+        <section class="panel-admin inventario-admin">
+            <div class="panel-titulo"><div><h3>Vehículos publicados</h3><p>Marca como vendido para actualizar las estadísticas.</p></div><a class="admin-accion" href="subir-vehiculo.html">＋ Publicar</a></div>
+            <div id="lista-admin-vehiculos" class="lista-admin-vehiculos"></div>
+        </section>
+        <section class="panel-admin ventas-recientes">
+            <div class="panel-titulo"><div><h3>Ventas recientes</h3><p>Ventas registradas desde este navegador</p></div></div>
+            <div class="tabla-contenedor">
+                <table>
+                    <thead><tr><th>Vehículo</th><th>Fecha</th><th>Valor</th><th>Estado</th></tr></thead>
+                    <tbody id="tabla-ventas-recientes"></tbody>
+                </table>
+                <p id="sin-ventas" class="sin-vehiculos">Todavía no hay ventas registradas.</p>
+            </div>
+        </section>
+    </main>
+    <footer class="footer">
+        <div><h3>OF_Cars · Administración</h3></div>
+        <div><h3>Panel de demostración</h3></div>
+    </footer>
+    <script src="dist/admin-panel.js" defer></script>
+</body>
+</html>

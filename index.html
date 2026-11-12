@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="CSS_C.Orozco.css">
+<script src="dist/catalogo.js" defer></script>
+<script src="dist/filtros.js" defer></script>
+</head>
+<body>
+
+    <header class="encabezado">
+        <div class="izq">
+        <img class="imagen" src="imagenes/carrrr.png" alt="logo" >
+        <a class="marca-enlace" href="index.html"><h1 class="titulo1">OF_Cars</h1></a>
+        </div>
+        
+        <nav class="enlaces">
+            <ul>
+            <li><a href="#camionetas">Camionetas</a></li>
+            <li><a href="#automoviles">Automóviles</a></li>
+            <li><a href="#camiones">Camiones</a></li>
+            <li><a href="loginCO.html">Admin</a></li>
+            
+            </ul>
+        </nav>
+        
+    </header>
+    
+  <main id="inicio">
+    <section class="buscador" id="buscador" aria-labelledby="titulo-buscador">
+      <p class="ceja">OF_CARS · BUSCA LA MEJOR OPCION </p>
+      <h1 id="titulo-buscador">¿Qué vehículo quieres encontrar?</h1>
+      <p class="subtitulo">Encuentra opciones que se ajusten a tu estilo y presupuesto.</p>
+
+      <form action="#resultados" method="get" class="form-busqueda">
+        <fieldset class="categorias" aria-label="Tipo de vehículo">
+          <legend class="solo-lectores">Elige una categoría</legend>
+          <input type="radio" name="categoria" id="cat-carros" value="carros" checked>
+          <label for="cat-carros">Carros</label>
+          <input type="radio" name="categoria" id="cat-camionetas" value="camionetas">
+          <label for="cat-camionetas">Camionetas</label>
+          <input type="radio" name="categoria" id="cat-camiones" value="camiones">
+          <label for="cat-camiones">Camiones</label>
+          <input type="radio" name="categoria" id="cat-otros" value="otros">
+          <label for="cat-otros">Otros</label></fieldset>
+
+        <label class="campo campo-buscar"><span class="solo-lectores">Buscar por nombre o modelo</span><input type="search" name="buscar" placeholder="Escribe marca, modelo o nombre del vehículo" autocomplete="off"></label>
+        <div class="campos-superiores">
+          <label class="campo campo-select">
+            <span class="solo-lectores">Marca</span>
+            <select name="marca" aria-label="Marca">
+              <option value="">Todas las marcas</option>
+              <option>Toyota</option>
+              <option>Mazda</option>
+              <option>Chevrolet</option>
+              <option>Kia</option>
+              <option>Mitsubishi</option>
+              <option>Tesla</option>
+            </select>
+          </label>
+          <label class="campo campo-select">
+            <span class="solo-lectores">Modelo</span>
+            <select name="modelo" aria-label="Modelo">
+              <option value="">Todos los modelos</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="rangos">
+          <fieldset class="grupo-rango">
+            <legend>Precio</legend>
+            <div class="pareja-campos">
+              <label class="campo"><span class="solo-lectores">Precio mínimo</span><input type="number" name="precio_min" min="0" placeholder="Desde"></label>
+              <label class="campo"><span class="solo-lectores">Precio máximo</span><input type="number" name="precio_max" min="0" placeholder="Hasta"></label>
+            </div>
+          </fieldset>
+          <fieldset class="grupo-rango">
+            <legend>Año</legend>
+            <div class="pareja-campos">
+              <label class="campo"><span class="solo-lectores">Año mínimo</span><input type="number" name="anio_min" min="1950" max="2099" placeholder="Desde"></label>
+              <label class="campo"><span class="solo-lectores">Año máximo</span><input type="number" name="anio_max" min="1950" max="2099" placeholder="Hasta"></label>
+            </div>
+          </fieldset>
+        </div>
+
+        <div class="preferencias" aria-label="Preferencias adicionales">
+          <label class="chip"><input type="checkbox" name="permuta"><span>Permuta</span></label>
+          <label class="chip"><input type="checkbox" name="promocion"><span>Promoción</span></label>
+          <label class="chip"><input type="checkbox" name="blindaje"><span>Blindaje</span></label>
+        </div>
+
+        <button class="boton-buscar" type="submit">
+          <svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="10.8" cy="10.8" r="6.8"></circle><path d="m16 16 5 5"></path></svg>
+          <span>Encuentra tu vehículo</span>
+        </button>
+      </form>
+    </section>
+
+        <section class="categorias-inventario" id="vehiculos" aria-labelledby="titulo-categorias">
+      <h2 id="titulo-categorias">BUSCAR POR CATEGORÍAS</h2>
+      <div class="lista-categorias">
+        <a class="categoria-icono" href="#automoviles">
+          <span class="circulo-categoria" aria-hidden="true">
+            <svg viewBox="0 0 64 48"><path d="m8 29 4-12a6 6 0 0 1 6-4h26a7 7 0 0 1 6 4l5 12 4 4v9h-7v-5H11v5H4v-9l4-4Z"/><path d="M13 28h38l-5-12H18l-5 12Z"/><circle cx="15" cy="37" r="5"/><circle cx="48" cy="37" r="5"/></svg>
+          </span>
+          <span>CARROS</span>
+        </a>
+        <a class="categoria-icono" href="#camionetas">
+          <span class="circulo-categoria" aria-hidden="true">
+            <svg viewBox="0 0 64 48"><path d="M5 15h31v20H5zM36 22h12l10 9v4H36z"/><path d="M10 20h10v10H10zM23 20h10v10H23z"/><circle cx="16" cy="37" r="6"/><circle cx="47" cy="37" r="6"/></svg>
+          </span>
+          <span>CAMIONETAS</span>
+        </a>
+        <a class="categoria-icono" href="#camiones">
+          <span class="circulo-categoria" aria-hidden="true">
+            <svg viewBox="0 0 64 48"><path d="M5 10h35v27H5zM40 20h11l9 10v7H40z"/><circle cx="16" cy="39" r="5"/><circle cx="50" cy="39" r="5"/><path d="M45 23v7h13"/></svg>
+          </span>
+          <span>CAMIONES</span>
+        </a>
+        <a class="categoria-icono" href="#otros">
+          <span class="circulo-categoria circulo-otros" aria-hidden="true">+</span>
+          <span>OTROS</span>
+        </a>
+      </div>
+    </section>
+  </main>
+
+    <section>
+    <div class="vehiculos" id="resultados">
+        <h2>Vehículos disponibles</h2>
+        <p id="mensaje-sin-resultados" class="mensaje-sin-resultados" role="status" aria-live="polite" hidden>No encontramos vehículos con esos filtros. Prueba cambiando tus opciones.</p>
+    <section id="camionetas" class="seccion-vehiculos">
+    <h2>Camionetas</h2>
+      <div class="tarjetas">
+    <article class="tarjeta" data-categoria="camionetas" data-marca="Toyota" data-modelo="Land Cruiser Serie 80" data-anio="1996" data-precio="40000000" data-permuta="" data-promocion="" data-blindaje="" data-id="toyota-burbuja">
+      <img class="imagencars" src="imagenes/burbuja.jpg" alt="Toyota Land Cruiser Serie 80">
+      <div class="info-auto">
+        <h3>Toyota Burbuja</h3>
+        <p>Toyota Land Cruiser Serie 80, modelo 1996</p>
+        <span class="precio">$40.000.000</span>
+      </div>
+    </article>
+
+        <article class="tarjeta" data-categoria="camionetas" data-marca="Toyota" data-modelo="Land Cruiser Serie 70" data-anio="1999" data-precio="120000000" data-permuta="" data-promocion="" data-blindaje="" data-id="toyota-machito">
+        
+        <img class="imagencars" src="imagenes/machito.jpg" alt="logo" >
+        <div class="info-auto">
+            <h3>TOYOTA MACHITO 4.5</h3>
+            <p>Toyota Land Cruiser Serie 70 modelo 1999</p>
+            <span class="precio">$120.000.000</span>
+        </div>
+        </article>
+        
+        <article class="tarjeta" data-categoria="camionetas" data-marca="Chevrolet" data-modelo="D-Max" data-anio="2012" data-precio="62000000" data-permuta="" data-promocion="" data-blindaje="" data-id="chevrolet-dmax">
+        
+        <img class="imagencars" src="imagenes/dmax estacas.webp" alt="logo" >
+        <div class="info-auto">
+            <h3>CHEVROLET D-MAX</h3>
+            <p>Chevrolet dmax modelo 2012 de estacas</p>
+            <span class="precio">$62.000.000</span>
+        </div>
+        </article>
+
+        <article class="tarjeta" data-categoria="camionetas" data-marca="Mitsubishi" data-modelo="Montero Wagon" data-anio="2008" data-precio="65000000" data-permuta="" data-promocion="" data-blindaje="" data-id="mitsubishi-montero">
+        <img class="imagencars" src="imagenes/montero.jpg" alt="logo" >
+        <div class="info-auto">
+            <h3>MITSUBISHI MONTERO WAGON</h3>
+            <p>MONTERO WAGON, 4 PUERTAS, MODELO 2008</p>
+            <span class="precio">$65.000.000</span>
+        </div>
+        </article>
+        <article class="tarjeta" data-categoria="camionetas" data-marca="Mazda" data-modelo="CX-30" data-anio="2024" data-precio="105000000" data-permuta="" data-promocion="" data-blindaje="" data-id="mazda-cx30">
+        <img class="imagencars" src="imagenes/cx 30.webp" alt="logo" >
+        <div class="info-auto">
+            <h3>MAZDA CX-30</h3>
+            <p>Mazda CX-30, modelo 2024</p>
+            <span class="precio">$105.000.000</span>
+        </div>
+        </article>
+    </div>
+    </section>
+
+    <section id="automoviles" class="seccion-vehiculos">
+    <h2>Automóviles</h2>
+    <div class="tarjetas">
+        <article class="tarjeta" data-categoria="carros" data-marca="Mazda" data-modelo="3 Grand Touring" data-anio="2023" data-precio="78000000" data-permuta="" data-promocion="" data-blindaje="" data-id="mazda-3">
+        <img class="imagencars" src="imagenes/mazda 3.webp" alt="logo" >
+        <div class="info-auto">
+            <h3>MAZDA 3 GRAND TOURING</h3>
+            <p>Mazda 3 grand touring, modelo 2023</p>
+            <span class="precio">$78.000.000</span>
+        </div>
+        </article>
+        
+        <article class="tarjeta" data-categoria="carros" data-marca="Kia" data-modelo="Cerato Pro" data-anio="2016" data-precio="45000000" data-permuta="" data-promocion="" data-blindaje="" data-id="kia-cerato">
+        <img class="imagencars" src="imagenes/ceratopro.webp" alt="logo" >
+        <div class="info-auto">
+            <h3>KIA CERATO PRO</h3>
+            <p>Kia cerato pro, modelo 2016</p>
+            <span class="precio">$45.000.000</span>
+        </div>
+        </article>
+
+        <article class="tarjeta" data-categoria="carros" data-marca="Tesla" data-modelo="Model 3" data-anio="2026" data-precio="120000000" data-permuta="" data-promocion="" data-blindaje="" data-id="tesla-model3">
+        <img class="imagencars" src="imagenes/model 3.jpg" alt="logo" >
+        <div class="info-auto">
+            <h3>TESLA MODEL 3</h3>
+            <p>Tesla model 3, modelo 2026</p>
+            <span class="precio">$120.000.000</span>
+        </div>
+        </article>
+
+        <article class="tarjeta" data-categoria="carros" data-marca="Chevrolet" data-modelo="Aveo Emotion" data-anio="2010" data-precio="36000000" data-permuta="" data-promocion="" data-blindaje="" data-id="chevrolet-aveo">
+        <img class="imagencars" src="imagenes/aveo emotion.webp" alt="logo" >
+        <div class="info-auto">
+            <h3>CHEVROLET AVEO EMOTION</h3>
+            <p>Aveo emotion, full equipo, modelo 2010</p>
+            <span class="precio">$36.000.000</span>
+        </div>
+        </article>
+        </div>
+        </section>
+        <section id="camiones" class="seccion-vehiculos">
+            <h2>Camiones</h2>
+            <p class="sin-vehiculos">Próximamente encontrarás camiones disponibles.</p>
+            <div class="tarjetas"></div>
+        <section id="otros" class="seccion-vehiculos">
+            <h2>Otros</h2>
+            <p class="sin-vehiculos">Por ahora no hay otros vehículos publicados.</p>
+            <div class="tarjetas"></div>
+        </section>
+        </section>
+    </div>
+    </section>
+
+
+    <aside id="contacto">
+        <div class="vehiculos">
+        <p>Más que un vehículo, una decisión inteligente
+Encuentra el vehículo que se adapta a tu estilo de vida, tus necesidades y tu presupuesto. En nuestro concesionario contamos con una amplia selección de vehículos, desde camionetas y SUV hasta pickups y automóviles, de diferentes marcas y estilos.
+
+Te ayudamos a encontrar una opción que combine calidad, respaldo y confianza, con asesoría personalizada durante todo el proceso de compra.
+
+¿Qué encontrarás con nosotros?
+🚙 Vehículos para trabajo, familia y aventura.
+🔑 Opciones para diferentes presupuestos y necesidades.
+🔍 Vehículos cuidadosamente seleccionados.
+🤝 Atención personalizada y transparente.
+📋 Acompañamiento durante el proceso de compra.
+💰 Opciones de financiación según tu perfil.
+Tu próximo vehículo puede estar más cerca de lo que imaginas.</p>
+
+
+        </div>
+    </aside>
+
+
+
+        <footer class="footer">
+           <div>
+        <h3>Redes_sociales:@concesionario_Orozco</h3>
+        
+        </div>
+        <div>
+        <h3>Telefono:1234567891</h3>
+        
+        </div>
+        </footer>
+    
+
+    
+</body>
+</html>
+
+
+
+
+
+

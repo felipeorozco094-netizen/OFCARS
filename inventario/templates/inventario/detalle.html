@@ -1,0 +1,29 @@
+{% extends 'inventario/base.html' %}
+{% block title %}{{ vehiculo.modelo.marca.nombre }} {{ vehiculo.modelo.nombre }} | OF Cars{% endblock %}
+{% block content %}
+<main class="page-wrap detail-wrap">
+    <a class="back-link" href="{% url 'inicio' %}">← Volver al catálogo</a>
+    <div class="detail-grid">
+        <section class="detail-gallery">
+            {% with main_photo=vehiculo.fotografia_set.all|first %}
+                {% if main_photo %}<img class="detail-main-photo" src="{{ main_photo.image_url }}" alt="{{ vehiculo.modelo.marca.nombre }} {{ vehiculo.modelo.nombre }}">{% else %}<div class="detail-main-photo photo-placeholder">Fotografías próximamente</div>{% endif %}
+            {% endwith %}
+            {% if vehiculo.fotografia_set.all|length > 1 %}<div class="detail-thumbnails">{% for photo in vehiculo.fotografia_set.all %}<a href="{{ photo.image_url }}" target="_blank" rel="noopener"><img src="{{ photo.image_url }}" alt="Foto {{ forloop.counter }} de {{ vehiculo.modelo }}"></a>{% endfor %}</div>{% endif %}
+        </section>
+        <section class="detail-info">
+            <p class="eyebrow">{{ vehiculo.tipo }} · {{ vehiculo.anio }}</p>
+            <h1>{{ vehiculo.modelo.marca.nombre }} {{ vehiculo.modelo.nombre }}</h1>
+            <strong class="detail-price">${{ vehiculo.precio|floatformat:0 }}</strong>
+            <div class="spec-grid">
+                <div><span>Kilometraje</span><strong>{{ vehiculo.kilometraje|default:0 }} km</strong></div>
+                <div><span>Combustible</span><strong>{{ vehiculo.combustible|default:'Por confirmar' }}</strong></div>
+                <div><span>Transmisión</span><strong>{{ vehiculo.transmision|default:'Por confirmar' }}</strong></div>
+                <div><span>Color</span><strong>{{ vehiculo.color|default:'Por confirmar' }}</strong></div>
+            </div>
+            <h2>Descripción</h2>
+            <p class="description">{{ vehiculo.descripcion|default:'Contáctanos para conocer más detalles de este vehículo.'|linebreaksbr }}</p>
+            <a class="button button-red" href="https://wa.me/573001234567?text=Hola%2C%20me%20interesa%20el%20veh%C3%ADculo%20{{ vehiculo.modelo.marca.nombre|urlencode }}%20{{ vehiculo.modelo.nombre|urlencode }}" target="_blank" rel="noopener">Consultar por WhatsApp</a>
+        </section>
+    </div>
+</main>
+{% endblock %}
