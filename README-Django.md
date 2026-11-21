@@ -1,6 +1,6 @@
 # OF_Cars · Django + MySQL
 
-Este proyecto ahora está dentro de `HTML FO`. Los HTML originales se mantienen como maqueta; al ejecutar Django, la página principal y el panel usan las vistas dinámicas y los templates de `inventario/templates/inventario/`.
+La aplicación web se sirve con Django. La ruta `/` muestra la plantilla `inventario/templates/inventario/inicio.html`; las demás páginas se encuentran en la misma carpeta. Los estilos están en `inventario/static/inventario/css/site.css` y la vista previa de fotos usa TypeScript en `inventario/ts/`.
 
 ## Base de datos
 
@@ -25,7 +25,7 @@ $env:DB_NAME = "concesionario_orozco"
 $env:DB_USER = "root"
 $env:DB_PASSWORD = "TU_CLAVE_MYSQL"
 $env:DB_HOST = "127.0.0.1"
-$env:DB_PORT = "3306"
+$env:DB_PORT = "3307"
 ```
 
 Prepara las tablas adicionales de Django y la nueva tabla de ventas, crea la cuenta administradora y ejecuta el sitio:
@@ -46,4 +46,4 @@ Abre <http://127.0.0.1:8000/>. El acceso está en `/acceso/`, el panel en `/pane
 - Al registrar una venta, Django crea el registro, calcula la comisión y cambia el vehículo a `Vendido`.
 - El panel calcula ventas e ingresos mensuales/semanales con los registros de `venta`.
 
-Para la previsualización de fotos en TypeScript, ejecuta `npm install` y `npm run build`. Ese paso solo compila la interfaz; las operaciones y persistencia las procesa Django/Python.
+Para compilar la vista previa de fotos, ejecuta `npm install` y `npm run build`. El código fuente TypeScript está en `inventario/ts/vehiculo_upload.ts` y el JavaScript generado que carga el navegador queda en `inventario/static/inventario/js/vehiculo_upload.js`. Los HTML de la raíz que eran prototipos estáticos se retiraron; Django usa las plantillas descritas arriba.

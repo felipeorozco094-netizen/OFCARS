@@ -11,7 +11,7 @@
             {% csrf_token %}
             {% if form.non_field_errors %}<div class="form-errors">{{ form.non_field_errors }}</div>{% endif %}
             <div class="form-fields">
-                {% for field in form %}<label class="field">{{ field.label }}{{ field }}{% if field.errors %}<span class="field-error">{{ field.errors|striptags }}</span>{% endif %}</label>{% endfor %}
+                {% for field in form %}<label class="field">{{ field.label }}{% if field.name == 'precio' %}<span class="currency-input"><span aria-hidden="true">$</span>{{ field }}</span>{% else %}{{ field }}{% endif %}{% if field.errors %}<span class="field-error">{{ field.errors|striptags }}</span>{% endif %}</label>{% endfor %}
             </div>
             <section class="photo-upload">
                 <label for="photo-input" class="upload-drop" id="upload-drop">
@@ -19,7 +19,18 @@
                     <small>JPG, PNG o WEBP · máximo 8 MB por imagen · hasta 20 fotos</small>
                     <input id="photo-input" type="file" name="fotos" accept="image/jpeg,image/png,image/webp" multiple {% if not vehiculo %}required{% endif %}>
                 </label>
-                {% if vehiculo and vehiculo.fotografia_set.all %}<p class="current-photos-label">Fotografías guardadas (se conservarán):</p><div class="photo-preview current-photos">{% for photo in vehiculo.fotografia_set.all %}<img src="{{ photo.url_imagen }}" alt="Foto existente {{ forloop.counter }}">{% endfor %}</div>{% endif %}
+                {% if vehiculo and vehiculo.fotografia_set.all %}
+                    <p class="current-photos-label">Fotografías guardadas. Marca las que quieras eliminar:</p>
+                    <div class="photo-preview current-photos">
+                        {% for photo in vehiculo.fotografia_set.all %}
+                        <div class="existing-photo">
+                                <img src="{{ photo.image_url }}" alt="Foto existente {{ forloop.counter }}">
+                                <span class="photo-choice"><input type="radio" name="foto_principal" value="{{ photo.id_foto }}" {% if photo.es_principal %}checked{% endif %}> Usar como foto principal</span>
+                                <label class="photo-choice"><input type="checkbox" name="eliminar_fotos" value="{{ photo.id_foto }}"> Eliminar esta foto</label>
+                        </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
                 <div id="photo-preview" class="photo-preview" aria-live="polite"></div>
                 <p id="photo-count" class="upload-hint">No has seleccionado fotos nuevas.</p>
             </section>

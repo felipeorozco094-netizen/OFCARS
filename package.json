@@ -1,1 +1,1 @@
-{"private":true,"scripts":{"build":"tsc -p tsconfig.json && tsc -p tsconfig.django.json"},"devDependencies":{"typescript":"~5.8.3"}}
+{"private":true,"scripts":{"build":"tsc -p tsconfig.django.json"},"devDependencies":{"typescript":"~5.8.3"}}

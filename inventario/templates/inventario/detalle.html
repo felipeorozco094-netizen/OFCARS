@@ -1,4 +1,6 @@
 {% extends 'inventario/base.html' %}
+{% load static %}
+{% load numeros %}
 {% block title %}{{ vehiculo.modelo.marca.nombre }} {{ vehiculo.modelo.nombre }} | OF Cars{% endblock %}
 {% block content %}
 <main class="page-wrap detail-wrap">
@@ -13,9 +15,9 @@
         <section class="detail-info">
             <p class="eyebrow">{{ vehiculo.tipo }} · {{ vehiculo.anio }}</p>
             <h1>{{ vehiculo.modelo.marca.nombre }} {{ vehiculo.modelo.nombre }}</h1>
-            <strong class="detail-price">${{ vehiculo.precio|floatformat:0 }}</strong>
+            <strong class="detail-price">${{ vehiculo.precio|miles }}</strong>
             <div class="spec-grid">
-                <div><span>Kilometraje</span><strong>{{ vehiculo.kilometraje|default:0 }} km</strong></div>
+                <div><span>Kilometraje</span><strong>{% if vehiculo.kilometraje %}{{ vehiculo.kilometraje|miles }} km{% else %}Por confirmar{% endif %}</strong></div>
                 <div><span>Combustible</span><strong>{{ vehiculo.combustible|default:'Por confirmar' }}</strong></div>
                 <div><span>Transmisión</span><strong>{{ vehiculo.transmision|default:'Por confirmar' }}</strong></div>
                 <div><span>Color</span><strong>{{ vehiculo.color|default:'Por confirmar' }}</strong></div>
@@ -23,7 +25,65 @@
             <h2>Descripción</h2>
             <p class="description">{{ vehiculo.descripcion|default:'Contáctanos para conocer más detalles de este vehículo.'|linebreaksbr }}</p>
             <a class="button button-red" href="https://wa.me/573001234567?text=Hola%2C%20me%20interesa%20el%20veh%C3%ADculo%20{{ vehiculo.modelo.marca.nombre|urlencode }}%20{{ vehiculo.modelo.nombre|urlencode }}" target="_blank" rel="noopener">Consultar por WhatsApp</a>
+            {% if request.user.is_authenticated and request.user.is_staff %}
+                <a class="button button-light admin-edit-link" href="{% url 'editar_vehiculo' vehiculo.id_vehiculo %}">Modificar publicación</a>
+                {% if vehiculo.estado == 'Disponible' %}
+                    <a class="button button-light admin-edit-link" href="{% url 'registrar_venta' %}?vehiculo={{ vehiculo.id_vehiculo }}">Registrar venta y marcar vendido</a>
+                {% endif %}
+            {% endif %}
         </section>
     </div>
+    <section class="detail-characteristics" aria-labelledby="characteristics-title">
+        <h2 id="characteristics-title">Características</h2>
+        <dl class="vehicle-specs">
+            <div><dt>Marca</dt><dd>{{ vehiculo.modelo.marca.nombre }}</dd></div>
+            <div><dt>Modelo</dt><dd>{{ vehiculo.modelo.nombre }}</dd></div>
+            <div><dt>Año</dt><dd>{{ vehiculo.anio }}</dd></div>
+            <div><dt>Estado</dt><dd>{{ vehiculo.estado|default:'Disponible' }}</dd></div>
+            <div><dt>Tipo</dt><dd>{{ vehiculo.tipo }}</dd></div>
+            <div><dt>Precio</dt><dd>${{ vehiculo.precio|miles }}</dd></div>
+            <div><dt>Kilometraje</dt><dd>{% if vehiculo.kilometraje %}{{ vehiculo.kilometraje|miles }} km{% else %}Por confirmar{% endif %}</dd></div>
+            <div><dt>Combustible</dt><dd>{{ vehiculo.combustible|default:'Por confirmar' }}</dd></div>
+            <div><dt>Transmisión</dt><dd>{{ vehiculo.transmision|default:'Por confirmar' }}</dd></div>
+            <div><dt>Color</dt><dd>{{ vehiculo.color|default:'Por confirmar' }}</dd></div>
+            <div><dt>Blindaje</dt><dd>{% if vehiculo.blindaje is None %}Por confirmar{% elif vehiculo.blindaje %}Sí{% else %}No{% endif %}</dd></div>
+            <div><dt>Cilindraje</dt><dd>{% if vehiculo.cilindraje %}{{ vehiculo.cilindraje|miles }} cc{% elif vehiculo.combustible == 'Eléctrico' %}No aplica (eléctrico){% else %}Por confirmar{% endif %}</dd></div>
+            <div><dt>Tipo de precio</dt><dd>{{ vehiculo.tipo_precio|default:'Por confirmar' }}</dd></div>
+            <div><dt>Último dígito de placa</dt><dd>{{ vehiculo.ultimo_digito_placa|default:'Por confirmar' }}</dd></div>
+            <div><dt>Asegurable según peritaje</dt><dd>{% if vehiculo.asegurable is None %}Por confirmar{% elif vehiculo.asegurable %}Sí{% else %}No{% endif %}</dd></div>
+        </dl>
+    </section>
+    <section class="finance-simulator" id="simulador-cuota" data-price="{{ vehiculo.precio }}" data-vehicle="{{ vehiculo.modelo.marca.nombre }} {{ vehiculo.modelo.nombre }}">
+        <h2>Simulador de cuota</h2>
+        <p class="finance-intro">Calcula un valor mensual aproximado según el plazo y la cuota inicial que elijas.</p>
+        <div class="finance-grid">
+            <div class="finance-controls">
+                <p class="finance-label">Valor del vehículo</p>
+                <strong class="finance-car-price" data-car-price></strong>
+                <fieldset class="term-selector">
+                    <legend>¿En cuántos meses quieres pagar?</legend>
+                    <div class="term-options">
+                        <button type="button" data-months="12">12</button>
+                        <button type="button" data-months="24">24</button>
+                        <button type="button" data-months="36">36</button>
+                        <button type="button" data-months="48">48</button>
+                        <button type="button" data-months="60">60</button>
+                        <button type="button" data-months="72" class="is-active">72</button>
+                    </div>
+                </fieldset>
+                <label class="down-payment-label" for="down-payment">Cuota inicial <output data-down-payment></output></label>
+                <input id="down-payment" type="range" min="0" max="70" step="5" value="30">
+                <output class="down-payment-percent" data-down-percent>30 %</output>
+            </div>
+            <div class="finance-result">
+                <p>Tu cuota mensual sería de:</p>
+                <strong data-monthly-payment></strong>
+                <small>Valor aproximado, sujeto a estudio de crédito.</small>
+                <a class="button button-red" data-finance-contact target="_blank" rel="noopener">Solicitar información</a>
+            </div>
+        </div>
+        <p class="finance-disclaimer">Estimación calculada con una tasa de referencia del 22 % efectivo anual, convertida a tasa mensual equivalente. La tasa real, seguros, cargos y aprobación dependen de la entidad financiera y del perfil del solicitante. Este simulador es informativo y no constituye una oferta de crédito.</p>
+    </section>
 </main>
+<script src="{% static 'inventario/js/finance_simulator.js' %}" defer></script>
 {% endblock %}

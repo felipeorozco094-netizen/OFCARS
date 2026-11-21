@@ -1,6 +1,7 @@
 from django.db import models
 from django.templatetags.static import static
 from django.utils import timezone
+from urllib.parse import urlparse
 
 
 class Concesionario(models.Model):
@@ -66,6 +67,8 @@ class Vehiculo(models.Model):
     TRANSMISIONES = [(v, v) for v in ("Manual", "Automática")]
     TIPOS = [(v, v) for v in ("Automóvil", "Camioneta", "SUV", "Pickup", "Camión")]
     ESTADOS = [(v, v) for v in ("Disponible", "Reservado", "Vendido")]
+    CONDICIONES = [("Nuevo", "Nuevo"), ("Usado", "Usado")]
+    TIPOS_PRECIO = [("Fijo", "Fijo"), ("Negociable", "Negociable")]
 
     id_vehiculo = models.AutoField(primary_key=True)
     modelo = models.ForeignKey(Modelo, models.DO_NOTHING, db_column="id_modelo")
@@ -79,6 +82,12 @@ class Vehiculo(models.Model):
     descripcion = models.TextField(blank=True, null=True)
     estado = models.CharField(max_length=20, choices=ESTADOS, default="Disponible", blank=True, null=True)
     fecha_publicacion = models.DateTimeField(blank=True, null=True)
+    blindaje = models.BooleanField(blank=True, null=True)
+    cilindraje = models.IntegerField(blank=True, null=True)
+    condicion = models.CharField(max_length=20, choices=CONDICIONES, blank=True, null=True)
+    tipo_precio = models.CharField(max_length=12, choices=TIPOS_PRECIO, blank=True, null=True)
+    ultimo_digito_placa = models.CharField(max_length=1, blank=True, null=True)
+    asegurable = models.BooleanField(blank=True, null=True)
 
     class Meta:
         managed = False
@@ -103,14 +112,18 @@ class Fotografia(models.Model):
     class Meta:
         managed = False
         db_table = "fotografia"
-        ordering = ["orden", "id_foto"]
+        ordering = ["-es_principal", "orden", "id_foto"]
 
     def __str__(self):
         return self.url_imagen
 
     @property
     def image_url(self):
-        if self.url_imagen.startswith(("http://", "https://", "/")):
+        if self.url_imagen.startswith(("http://", "https://")):
+            if urlparse(self.url_imagen).hostname == "cdn.concesionarioorozco.com":
+                return static("inventario/imagenes/carredblack.png")
+            return self.url_imagen
+        if self.url_imagen.startswith("/"):
             return self.url_imagen
         if self.url_imagen.startswith("imagenes/"):
             return static(f"inventario/{self.url_imagen}")

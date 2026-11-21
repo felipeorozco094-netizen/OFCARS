@@ -1,75 +1,203 @@
 {% extends 'inventario/base.html' %}
+{% load numeros %}
+{% load static %}
+
 {% block title %}Vehículos disponibles | OF Cars{% endblock %}
+
 {% block content %}
-<main class="page-wrap">
-    <section class="hero">
-        <p class="eyebrow">OF_CARS · INVENTARIO SELECCIONADO</p>
-        <h1>Encuentra tu próximo vehículo</h1>
-        <p>Explora opciones y filtra el inventario del concesionario.</p>
+<main>
+    <section class="home-hero" id="buscador">
+        <div class="home-hero-copy">
+            <p class="eyebrow">OF_CARS · CONCESIONARIO OROZCO</p>
+            <h1>Encuentra el vehículo que va contigo.</h1>
+            <p>Explora nuestro inventario, compara opciones y encuentra una que se ajuste a tu estilo y presupuesto.</p>
+        </div>
+
+        <form class="filter-panel home-filter" method="get" action="{% url 'inicio' %}#resultados">
+            <div class="category-links" aria-label="Buscar por categoría">
+                <a class="category-link" href="#automoviles">
+                    <svg class="category-symbol" aria-hidden="true" viewBox="0 0 64 48"><path d="m8 29 4-12a6 6 0 0 1 6-4h26a7 7 0 0 1 6 4l5 12 4 4v9h-7v-5H11v5H4v-9l4-4Z"/><path d="M13 28h38l-5-12H18l-5 12Z"/><circle cx="15" cy="37" r="5"/><circle cx="48" cy="37" r="5"/></svg>
+                    <span>Carros</span>
+                </a>
+                <a class="category-link" href="#camionetas">
+                    <svg class="category-symbol" aria-hidden="true" viewBox="0 0 64 48"><path d="M5 15h31v20H5zM36 22h12l10 9v4H36z"/><path d="M10 20h10v10H10zM23 20h10v10H23z"/><circle cx="16" cy="37" r="6"/><circle cx="47" cy="37" r="6"/></svg>
+                    <span>Camionetas</span>
+                </a>
+                <a class="category-link" href="#camiones">
+                    <svg class="category-symbol" aria-hidden="true" viewBox="0 0 64 48"><path d="M5 10h35v27H5zM40 20h11l9 10v7H40z"/><path d="M45 23v7h13"/><circle cx="16" cy="39" r="5"/><circle cx="50" cy="39" r="5"/></svg>
+                    <span>Camiones</span>
+                </a>
+            </div>
+
+            <div class="filter-grid">
+                <label class="field field-wide">Buscar por marca o modelo
+                    <input type="search" name="q" value="{{ query }}" placeholder="Ej. Toyota, Mazda 3, Duster">
+                </label>
+                <label class="field">Tipo
+                    <select name="tipo">
+                        <option value="">Todos los tipos</option>
+                        {% for value,label in tipo_choices %}
+                            <option value="{{ value }}" {% if tipo_seleccionado == value %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </label>
+                <label class="field">Marca
+                    <select name="marca">
+                        <option value="">Todas las marcas</option>
+                        {% for marca in marcas %}
+                            <option value="{{ marca.nombre }}" {% if valores_filtro.marca == marca.nombre %}selected{% endif %}>{{ marca.nombre }}</option>
+                        {% endfor %}
+                    </select>
+                </label>
+                <label class="field">Modelo
+                    <input type="text" name="modelo" value="{{ valores_filtro.modelo }}" placeholder="Cualquier modelo">
+                </label>
+                <label class="field">Precio desde
+                    <input type="number" min="0" name="precio_min" value="{{ valores_filtro.precio_min }}" placeholder="$ mínimo">
+                </label>
+                <label class="field">Precio hasta
+                    <input type="number" min="0" name="precio_max" value="{{ valores_filtro.precio_max }}" placeholder="$ máximo">
+                </label>
+                <label class="field">Año desde
+                    <input type="number" min="1950" max="2100" name="anio_min" value="{{ valores_filtro.anio_min }}" placeholder="Año mínimo">
+                </label>
+                <label class="field">Año hasta
+                    <input type="number" min="1950" max="2100" name="anio_max" value="{{ valores_filtro.anio_max }}" placeholder="Año máximo">
+                </label>
+                <label class="field">Combustible
+                    <select name="combustible">
+                        <option value="">Cualquiera</option>
+                        <option value="Gasolina" {% if valores_filtro.combustible == 'Gasolina' %}selected{% endif %}>Gasolina</option>
+                        <option value="Diésel" {% if valores_filtro.combustible == 'Diésel' %}selected{% endif %}>Diésel</option>
+                        <option value="Híbrido" {% if valores_filtro.combustible == 'Híbrido' %}selected{% endif %}>Híbrido</option>
+                        <option value="Eléctrico" {% if valores_filtro.combustible == 'Eléctrico' %}selected{% endif %}>Eléctrico</option>
+                        <option value="Gas" {% if valores_filtro.combustible == 'Gas' %}selected{% endif %}>Gas</option>
+                    </select>
+                </label>
+                <label class="field">Transmisión
+                    <select name="transmision">
+                        <option value="">Cualquiera</option>
+                        <option value="Manual" {% if valores_filtro.transmision == 'Manual' %}selected{% endif %}>Manual</option>
+                        <option value="Automática" {% if valores_filtro.transmision == 'Automática' %}selected{% endif %}>Automática</option>
+                    </select>
+                </label>
+            </div>
+            <div class="filter-actions">
+                <a class="button button-light" href="{% url 'inicio' %}#buscador">Limpiar</a>
+                <button class="button button-red" type="submit">Buscar vehículos</button>
+            </div>
+        </form>
     </section>
 
-    <form class="filter-panel" method="get" action="{% url 'inicio' %}">
-        <div class="filter-grid">
-            <label class="field field-wide">Buscar por marca o modelo
-                <input type="search" name="q" value="{{ query }}" placeholder="Ej. Toyota Burbuja">
-            </label>
-            <label class="field">Tipo
-                <select name="tipo">
-                    <option value="">Todos los tipos</option>
-                    {% for value,label in tipo_choices %}<option value="{{ value }}" {% if tipo_seleccionado == value %}selected{% endif %}>{{ label }}</option>{% endfor %}
-                    {% if not tipo_choices %}
-                        <option value="Automóvil" {% if tipo_seleccionado == 'Automóvil' %}selected{% endif %}>Automóvil</option>
-                        <option value="Camioneta" {% if tipo_seleccionado == 'Camioneta' %}selected{% endif %}>Camioneta</option>
-                        <option value="SUV" {% if tipo_seleccionado == 'SUV' %}selected{% endif %}>SUV</option>
-                        <option value="Pickup" {% if tipo_seleccionado == 'Pickup' %}selected{% endif %}>Pickup</option>
-                        <option value="Camión" {% if tipo_seleccionado == 'Camión' %}selected{% endif %}>Camión</option>
-                    {% endif %}
-                </select>
-            </label>
-            <label class="field">Marca
-                <select name="marca"><option value="">Todas las marcas</option>{% for marca in marcas %}<option value="{{ marca.nombre }}" {% if valores_filtro.marca == marca.nombre %}selected{% endif %}>{{ marca.nombre }}</option>{% endfor %}</select>
-            </label>
-            <label class="field">Modelo
-                <input type="text" name="modelo" value="{{ valores_filtro.modelo }}" placeholder="Cualquier modelo">
-            </label>
-            <label class="field">Precio desde<input type="number" min="0" name="precio_min" value="{{ valores_filtro.precio_min }}" placeholder="$ mínimo"></label>
-            <label class="field">Precio hasta<input type="number" min="0" name="precio_max" value="{{ valores_filtro.precio_max }}" placeholder="$ máximo"></label>
-            <label class="field">Año desde<input type="number" min="1950" max="2100" name="anio_min" value="{{ valores_filtro.anio_min }}" placeholder="Año mínimo"></label>
-            <label class="field">Año hasta<input type="number" min="1950" max="2100" name="anio_max" value="{{ valores_filtro.anio_max }}" placeholder="Año máximo"></label>
-            <label class="field">Combustible
-                <select name="combustible"><option value="">Cualquiera</option><option {% if valores_filtro.combustible == 'Gasolina' %}selected{% endif %}>Gasolina</option><option {% if valores_filtro.combustible == 'Diésel' %}selected{% endif %}>Diésel</option><option {% if valores_filtro.combustible == 'Híbrido' %}selected{% endif %}>Híbrido</option><option {% if valores_filtro.combustible == 'Eléctrico' %}selected{% endif %}>Eléctrico</option><option {% if valores_filtro.combustible == 'Gas' %}selected{% endif %}>Gas</option></select>
-            </label>
-            <label class="field">Transmisión
-                <select name="transmision"><option value="">Cualquiera</option><option {% if valores_filtro.transmision == 'Manual' %}selected{% endif %}>Manual</option><option {% if valores_filtro.transmision == 'Automática' %}selected{% endif %}>Automática</option></select>
-            </label>
-        </div>
-        <div class="filter-actions">
-            <a class="button button-light" href="{% url 'inicio' %}">Limpiar</a>
-            <button class="button button-red" type="submit">Buscar vehículos</button>
-        </div>
-    </form>
-
-    <section class="inventory-section">
-        <div class="section-heading"><div><p class="eyebrow">INVENTARIO</p><h2>Vehículos disponibles</h2></div><span>{{ vehiculos|length }} resultados</span></div>
-        {% if vehiculos %}
-            <div class="vehicle-grid">
-                {% for vehiculo in vehiculos %}
-                    <a class="vehicle-card" href="{% url 'detalle_vehiculo' vehiculo.id_vehiculo %}">
-                        <div class="vehicle-photo">
-                            {% with photo=vehiculo.fotografia_set.all|first %}{% if photo %}<img src="{{ photo.image_url }}" alt="{{ vehiculo.modelo.marca.nombre }} {{ vehiculo.modelo.nombre }}">{% else %}<span>Foto próximamente</span>{% endif %}{% endwith %}
-                        </div>
-                        <div class="vehicle-info">
-                            <p class="vehicle-category">{{ vehiculo.tipo }} · {{ vehiculo.anio }}</p>
-                            <h3>{{ vehiculo.modelo.marca.nombre }} {{ vehiculo.modelo.nombre }}</h3>
-                            <p>{{ vehiculo.kilometraje|default:0 }} km · {{ vehiculo.combustible|default:'Combustible por confirmar' }}</p>
-                            <strong class="vehicle-price">${{ vehiculo.precio|floatformat:0 }}</strong>
-                        </div>
-                    </a>
-                {% endfor %}
+    <section class="interest-section" aria-labelledby="interest-title">
+        <div class="interest-heading">
+            <div><h2 id="interest-title">De tu interés</h2><span aria-hidden="true"></span></div>
+            <div class="interest-controls">
+                <button type="button" data-carousel-prev aria-label="Desplazar categorías hacia la izquierda">‹</button>
+                <button type="button" data-carousel-next aria-label="Desplazar categorías hacia la derecha">›</button>
             </div>
+        </div>
+        <div class="interest-carousel" data-interest-carousel tabindex="0" aria-label="Categorías por combustible">
+            <a class="interest-card" href="{% url 'inicio' %}?combustible=Híbrido#resultados"><img src="{% static 'inventario/imagenes/cx 30.webp' %}" alt="Vehículo híbrido"><span>Híbrido</span></a>
+            <a class="interest-card" href="{% url 'inicio' %}?combustible=Eléctrico#resultados"><img src="{% static 'inventario/imagenes/model 3.jpg' %}" alt="Vehículo eléctrico"><span>Eléctrico</span></a>
+            <a class="interest-card" href="{% url 'inicio' %}?combustible=Diésel#resultados"><img src="{% static 'inventario/imagenes/dmax estacas.webp' %}" alt="Vehículo diésel"><span>Diésel</span></a>
+            <a class="interest-card" href="{% url 'inicio' %}?combustible=Gasolina#resultados"><img src="{% static 'inventario/imagenes/mazda 3.webp' %}" alt="Vehículo a gasolina"><span>Gasolina</span></a>
+            <a class="interest-card" href="{% url 'inicio' %}?combustible=Gas#resultados"><img src="{% static 'inventario/imagenes/aveo emotion.webp' %}" alt="Vehículo a gas"><span>Gas</span></a>
+        </div>
+    </section>
+
+    <section class="categories-section" aria-labelledby="categories-title">
+        <div class="section-heading">
+            <div>
+                <p class="eyebrow">EXPLORA EL INVENTARIO</p>
+                <h2 id="categories-title">Buscar por categorías</h2>
+            </div>
+        </div>
+        <div class="category-tiles">
+            <a href="#automoviles"><svg class="category-tile-icon" aria-hidden="true" viewBox="0 0 64 48"><path d="m8 29 4-12a6 6 0 0 1 6-4h26a7 7 0 0 1 6 4l5 12 4 4v9h-7v-5H11v5H4v-9l4-4Z"/><path d="M13 28h38l-5-12H18l-5 12Z"/><circle cx="15" cy="37" r="5"/><circle cx="48" cy="37" r="5"/></svg><strong>Carros</strong><small>Automóviles para cada plan</small></a>
+            <a href="#camionetas"><svg class="category-tile-icon" aria-hidden="true" viewBox="0 0 64 48"><path d="M5 15h31v20H5zM36 22h12l10 9v4H36z"/><path d="M10 20h10v10H10zM23 20h10v10H23z"/><circle cx="16" cy="37" r="6"/><circle cx="47" cy="37" r="6"/></svg><strong>Camionetas</strong><small>SUV, pickups y más</small></a>
+            <a href="#camiones"><svg class="category-tile-icon" aria-hidden="true" viewBox="0 0 64 48"><path d="M5 10h35v27H5zM40 20h11l9 10v7H40z"/><path d="M45 23v7h13"/><circle cx="16" cy="39" r="5"/><circle cx="50" cy="39" r="5"/></svg><strong>Camiones</strong><small>Vehículos para tu trabajo</small></a>
+        </div>
+    </section>
+
+    <section class="inventory-section home-inventory" id="resultados">
+        <div class="section-heading">
+            <div>
+                <p class="eyebrow">INVENTARIO SELECCIONADO</p>
+                <h2>Vehículos disponibles</h2>
+            </div>
+            <span>{{ vehiculos|length }} resultado{{ vehiculos|length|pluralize:"s" }}</span>
+        </div>
+
+        {% if vehiculos %}
+            {% for grupo in grupos_vehiculos %}
+                <section class="vehicle-category-section" id="{{ grupo.id }}">
+                    <div class="category-heading">
+                        <h3>{{ grupo.nombre }}</h3>
+                        <span>{{ grupo.vehiculos|length }} vehículo{{ grupo.vehiculos|length|pluralize:"s" }}</span>
+                    </div>
+                    {% if grupo.vehiculos %}
+                        <div class="vehicle-grid">
+                            {% for vehiculo in grupo.vehiculos %}
+                                <a class="vehicle-card" href="{% url 'detalle_vehiculo' vehiculo.id_vehiculo %}">
+                                    <div class="vehicle-photo">
+                                        {% with photo=vehiculo.fotografia_set.all|first %}
+                                            {% if photo %}
+                                                <img src="{{ photo.image_url }}" alt="{{ vehiculo.modelo.marca.nombre }} {{ vehiculo.modelo.nombre }}">
+                                            {% else %}
+                                                <img src="{% static 'inventario/imagenes/carredblack.png' %}" alt="Imagen referencial de vehículo">
+                                            {% endif %}
+                                        {% endwith %}
+                                        <span class="photo-badge">{{ vehiculo.tipo }}</span>
+                                    </div>
+                                    <div class="vehicle-info">
+                                        <p class="vehicle-category">{{ vehiculo.anio }} · {{ vehiculo.transmision|default:'Transmisión por confirmar' }}</p>
+                                        <h4>{{ vehiculo.modelo.marca.nombre }} {{ vehiculo.modelo.nombre }}</h4>
+                                        <strong class="vehicle-price">${{ vehiculo.precio|miles }}</strong>
+                                        <span class="card-more">Ver detalles <span aria-hidden="true">→</span></span>
+                                    </div>
+                                </a>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="category-empty">No hay vehículos de esta categoría que coincidan con la búsqueda.</p>
+                    {% endif %}
+                </section>
+            {% endfor %}
         {% else %}
-            <div class="empty-state"><h3>No encontramos vehículos con esos filtros</h3><p>Prueba con otra marca, modelo o rango de precio.</p><a class="button button-red" href="{% url 'inicio' %}">Ver todo el inventario</a></div>
+            <div class="empty-state">
+                <span class="empty-icon" aria-hidden="true">⌕</span>
+                <h3>No encontramos vehículos con esos filtros</h3>
+                <p>Prueba con otra marca, modelo o rango de precio.</p>
+                <a class="button button-red" href="{% url 'inicio' %}#buscador">Ver todo el inventario</a>
+            </div>
         {% endif %}
     </section>
+
+    <section class="services-section" id="servicios" aria-labelledby="services-title">
+        <div class="section-heading"><div><p class="eyebrow">SERVICIOS DEL CONCESIONARIO</p><h2 id="services-title">Te acompañamos en tu compra</h2></div></div>
+        <div class="services-grid">
+            <article class="service-card" id="servicio-financiacion">
+                <span class="service-number">01</span><h3>Financiación</h3>
+                <p>Calcula una cuota mensual aproximada desde la ficha de cada vehículo y consulta con un asesor las opciones disponibles.</p>
+                <a class="button button-red" href="#resultados">Explorar vehículos</a>
+            </article>
+            <article class="service-card" id="servicio-asesoria">
+                <span class="service-number">02</span><h3>Asesoría y trámites</h3>
+                <p>Resuelve tus dudas sobre una publicación y consulta con el concesionario los pasos para continuar la compra.</p>
+                <a class="button button-light" href="#contacto">Contactar al concesionario</a>
+            </article>
+        </div>
+    </section>
+
+    <section class="contact-promo" id="contacto">
+        <div>
+            <p class="eyebrow">OF_CARS · CONCESIONARIO OROZCO</p>
+            <h2>Tu próximo vehículo puede estar más cerca de lo que imaginas.</h2>
+            <p>Te acompañamos con atención cercana y transparente para que encuentres una opción que combine calidad, respaldo y confianza.</p>
+        </div>
+        <a class="button button-red" href="tel:+573000000003">Habla con un asesor</a>
+    </section>
 </main>
+<script src="{% static 'inventario/js/interest_carousel.js' %}?v=1" defer></script>
 {% endblock %}

@@ -1,2 +1,0 @@
-El esquema completo está en concesionario_orozco.sql.
-Ejecuta ese script una sola vez si la base de datos todavía no existe.

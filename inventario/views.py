@@ -10,6 +10,7 @@ from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth.forms import AuthenticationForm
+from django.conf import settings
 from django.core.files.storage import default_storage
 from django.db import transaction
 from django.db.models import Count, Q, Sum
@@ -71,8 +72,30 @@ def inicio(request):
         if not has_direct_matches:
             vehiculos = vehiculos[:20]
 
+    vehiculos = list(vehiculos)
+    secciones = (
+        {"id": "automoviles", "nombre": "Carros", "tipos": ("Automóvil",)},
+        {
+            "id": "camionetas",
+            "nombre": "Camionetas y SUV",
+            "tipos": ("Camioneta", "SUV", "Pickup"),
+        },
+        {"id": "camiones", "nombre": "Camiones", "tipos": ("Camión",)},
+    )
+    grupos_vehiculos = [
+        {
+            **seccion,
+            "vehiculos": [
+                vehiculo for vehiculo in vehiculos
+                if vehiculo.tipo in seccion["tipos"]
+            ],
+        }
+        for seccion in secciones
+    ]
+
     return render(request, "inventario/inicio.html", {
         "vehiculos": vehiculos,
+        "grupos_vehiculos": grupos_vehiculos,
         "tipo_seleccionado": tipo,
         "tipo_choices": Vehiculo.TIPOS,
         "query": query,
@@ -202,6 +225,12 @@ def _form_inicial(vehiculo):
         "combustible": vehiculo.combustible,
         "transmision": vehiculo.transmision,
         "color": vehiculo.color,
+        "blindaje": "1" if vehiculo.blindaje else ("0" if vehiculo.blindaje is False else ""),
+        "cilindraje": vehiculo.cilindraje,
+        "condicion": vehiculo.condicion,
+        "tipo_precio": vehiculo.tipo_precio,
+        "ultimo_digito_placa": vehiculo.ultimo_digito_placa,
+        "asegurable": "1" if vehiculo.asegurable else ("0" if vehiculo.asegurable is False else ""),
         "descripcion": vehiculo.descripcion,
     }
 
@@ -221,6 +250,11 @@ def _validar_fotos(request, requeridas):
 
 
 def _guardar_fotos(request, vehiculo):
+    fotos = request.FILES.getlist("fotos")
+    principal_nueva = request.POST.get("foto_principal_nueva", "")
+    if principal_nueva.isdigit() and int(principal_nueva) < len(fotos):
+        vehiculo.fotografia_set.update(es_principal=False)
+
     for index, foto in enumerate(request.FILES.getlist("fotos")):
         extension = Path(foto.name).suffix.lower()
         path = default_storage.save(f"vehiculos/{uuid4().hex}{extension}", foto)
@@ -228,17 +262,52 @@ def _guardar_fotos(request, vehiculo):
         Fotografia.objects.create(
             vehiculo=vehiculo,
             url_imagen=default_storage.url(path),
-            es_principal=(current_count == 0 and index == 0),
+            es_principal=(
+                index == int(principal_nueva)
+                if principal_nueva.isdigit() and int(principal_nueva) < len(fotos)
+                else current_count == 0 and index == 0
+            ),
             orden=current_count + index,
         )
+
+
+def _eliminar_fotos_seleccionadas(request, vehiculo):
+    seleccionadas = request.POST.getlist("eliminar_fotos")
+    fotos = vehiculo.fotografia_set.filter(id_foto__in=seleccionadas)
+    for fotografia in fotos:
+        url = fotografia.url_imagen
+        if url.startswith(settings.MEDIA_URL):
+            ruta = url.removeprefix(settings.MEDIA_URL).lstrip("/")
+            if ruta.startswith("vehiculos/"):
+                default_storage.delete(ruta)
+        fotografia.delete()
+
+
+def _marcar_foto_principal(request, vehiculo):
+    nueva = request.POST.get("foto_principal_nueva", "")
+    if nueva.isdigit() and int(nueva) < len(request.FILES.getlist("fotos")):
+        return
+    foto_id = request.POST.get("foto_principal")
+    if not foto_id:
+        return
+    foto = vehiculo.fotografia_set.filter(id_foto=foto_id).first()
+    if foto is None:
+        return
+    vehiculo.fotografia_set.update(es_principal=False)
+    foto.es_principal = True
+    foto.save(update_fields=["es_principal"])
 
 
 def _copiar_datos_formulario(form, vehiculo):
     for field in (
         "tipo", "anio", "precio", "kilometraje", "combustible",
         "transmision", "color", "descripcion",
+        "cilindraje", "condicion", "tipo_precio", "ultimo_digito_placa",
     ):
         setattr(vehiculo, field, form.cleaned_data[field])
+    for field in ("blindaje", "asegurable"):
+        value = form.cleaned_data[field]
+        setattr(vehiculo, field, None if value == "" else value == "1")
 
 
 def _buscar_o_crear_modelo(form):
@@ -299,7 +368,9 @@ def editar_vehiculo(request, vehiculo_id):
                 vehiculo.modelo = _buscar_o_crear_modelo(form)
                 _copiar_datos_formulario(form, vehiculo)
                 vehiculo.save()
+                _eliminar_fotos_seleccionadas(request, vehiculo)
                 _guardar_fotos(request, vehiculo)
+                _marcar_foto_principal(request, vehiculo)
             messages.success(request, "Los datos del vehículo se actualizaron.")
             return redirect("inventario_admin")
 
@@ -313,7 +384,18 @@ def editar_vehiculo(request, vehiculo_id):
 @admin_requerido
 @require_http_methods(["GET", "POST"])
 def registrar_venta(request):
-    form = VentaForm(request.POST or None)
+    initial = {}
+    selected_id = request.GET.get("vehiculo")
+    if selected_id and selected_id.isdigit():
+        selected_vehicle = Vehiculo.objects.filter(
+            pk=selected_id, estado="Disponible"
+        ).first()
+        if selected_vehicle:
+            initial = {
+                "vehiculo_id": selected_vehicle.pk,
+                "precio_venta": selected_vehicle.precio,
+            }
+    form = VentaForm(request.POST or None, initial=initial)
     if request.method == "POST" and form.is_valid():
         try:
             with transaction.atomic():

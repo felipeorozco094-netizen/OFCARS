@@ -2,17 +2,56 @@ const fileInput = document.querySelector<HTMLInputElement>("#photo-input");
 const preview = document.querySelector<HTMLDivElement>("#photo-preview");
 const countLabel = document.querySelector<HTMLElement>("#photo-count");
 const dropArea = document.querySelector<HTMLLabelElement>("#upload-drop");
+const currencyInput = document.querySelector<HTMLInputElement>('[data-currency-input="cop"]');
+const mileageInput = document.querySelector<HTMLInputElement>('[data-number-format="thousands"]');
+
+function formatWholeNumber(input: HTMLInputElement): void {
+    const digits = input.value.replace(/\D/g, "");
+    input.value = digits ? Number(digits).toLocaleString("es-CO") : "";
+}
+
+if (mileageInput) {
+    mileageInput.addEventListener("input", () => formatWholeNumber(mileageInput));
+    mileageInput.form?.addEventListener("submit", () => {
+        mileageInput.value = mileageInput.value.replace(/\D/g, "");
+    });
+    formatWholeNumber(mileageInput);
+}
+
+if (currencyInput) {
+    const formatPesos = () => {
+        const digits = currencyInput.value.replace(/\D/g, "");
+        currencyInput.value = digits ? Number(digits).toLocaleString("es-CO") : "";
+    };
+
+    currencyInput.addEventListener("input", formatPesos);
+    currencyInput.form?.addEventListener("submit", () => {
+        currencyInput.value = currencyInput.value.replace(/\D/g, "");
+    });
+    formatPesos();
+}
 
 if (fileInput && preview && countLabel && dropArea) {
     const renderFiles = (files: FileList | File[]) => {
         preview.replaceChildren();
 
         const images = Array.from(files).filter((file) => file.type.startsWith("image/"));
-        images.forEach((file) => {
+        images.forEach((file, index) => {
+            const card = document.createElement("label");
+            card.className = "new-photo-choice";
             const image = document.createElement("img");
             image.src = URL.createObjectURL(file);
             image.alt = `Vista previa: ${file.name}`;
-            preview.append(image);
+            const choice = document.createElement("span");
+            choice.className = "photo-choice";
+            const radio = document.createElement("input");
+            radio.type = "radio";
+            radio.name = "foto_principal_nueva";
+            radio.value = String(index);
+            radio.checked = index === 0;
+            choice.append(radio, document.createTextNode("Usar como foto principal"));
+            card.append(image, choice);
+            preview.append(card);
         });
 
         countLabel.textContent = images.length

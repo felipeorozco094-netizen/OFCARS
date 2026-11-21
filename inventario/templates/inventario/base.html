@@ -6,15 +6,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="OF Cars, vehículos seleccionados para ti">
     <title>{% block title %}OF Cars{% endblock %}</title>
-    <link rel="stylesheet" href="{% static 'inventario/css/site.css' %}">
-    <link rel="stylesheet" href="{% static 'inventario/css/CSS_C.Orozco.css' %}">
+    <link rel="stylesheet" href="{% static 'inventario/css/site.css' %}?v=5">
     {% block extra_css %}{% endblock %}
 </head>
 <body class="{% block body_class %}{% endblock %}">
     <header class="site-header">
-        <a class="brand" href="{% url 'inicio' %}">OF<span>_</span>CARS</a>
+        <a class="brand" href="{% url 'inicio' %}" aria-label="OF Cars, inicio">
+            <img src="{% static 'inventario/imagenes/carredblack.png' %}" alt="">
+            <span>OF_CARS</span>
+        </a>
         <nav class="site-nav" aria-label="Navegación principal">
-            <a href="{% url 'inicio' %}">Vehículos</a>
+            <a href="{% url 'inicio' %}#buscador">Inicio</a>
+            <a href="{% url 'inicio' %}#automoviles">Carros</a>
+            <a href="{% url 'inicio' %}#camionetas">Camionetas</a>
+            <a href="{% url 'inicio' %}#camiones">Camiones</a>
+            <details class="nav-services">
+                <summary>Servicios</summary>
+                <div class="nav-services-menu">
+                    <a href="{% url 'inicio' %}#servicio-financiacion">Financiación</a>
+                    <a href="{% url 'inicio' %}#servicio-asesoria">Asesoría</a>
+                </div>
+            </details>
             {% if request.user.is_staff %}
                 <a href="{% url 'panel' %}">Panel</a>
                 <a href="{% url 'inventario_admin' %}">Inventario</a>

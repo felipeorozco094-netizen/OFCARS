@@ -35,7 +35,7 @@ TEMPLATES = [{
         "django.template.context_processors.request",
         "django.contrib.auth.context_processors.auth",
         "django.contrib.messages.context_processors.messages",
-    ]},
+    ], "libraries": {"numeros": "inventario.templatetags.numeros"}},
 }]
 
 WSGI_APPLICATION = "of_cars.wsgi.application"
@@ -48,7 +48,9 @@ DATABASES = {"default": {
     "USER": os.getenv("DB_USER", "root"),
     "PASSWORD": os.getenv("DB_PASSWORD", ""),
     "HOST": os.getenv("DB_HOST", "127.0.0.1"),
-    "PORT": os.getenv("DB_PORT", "3306"),
+    # La copia local compatible con Django corre en 3307; puedes sobrescribirlo
+    # con DB_PORT cuando uses otro servidor MySQL/MariaDB.
+    "PORT": os.getenv("DB_PORT", "3307"),
     "OPTIONS": {"charset": "utf8mb4"},
 }}
 

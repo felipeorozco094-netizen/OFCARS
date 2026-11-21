@@ -11,8 +11,10 @@
 }
 
 * { box-sizing: border-box; }
+body, body * { font-family: Arial, Helvetica, sans-serif; }
 html { scroll-behavior: smooth; }
-body { margin: 0; background: var(--paper); color: var(--ink); font-family: Inter, "Segoe UI", Arial, sans-serif; }
+body { margin: 0; background: var(--paper); color: var(--ink); font-family: Arial, Helvetica, sans-serif; }
+h1, h2, h3, h4 { font-family: Arial, Helvetica, sans-serif; }
 a { color: inherit; }
 .site-header { min-height: 76px; display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 12px max(5vw, 22px); background: #1c1c1f; color: var(--white); }
 .brand { color: white; font-size: 21px; font-weight: 850; letter-spacing: .1em; text-decoration: none; }
@@ -21,6 +23,14 @@ a { color: inherit; }
 .site-nav a,.nav-button { border: 0; background: none; color: #f4f4f5; font: inherit; font-size: 14px; text-decoration: none; cursor: pointer; }
 .site-nav a:hover,.nav-button:hover { color: #ff8b8e; }
 .site-nav form { margin: 0; }
+.nav-services { position: relative; color: #f4f4f5; font-size: 14px; }
+.nav-services summary { list-style: none; cursor: pointer; }
+.nav-services summary::-webkit-details-marker { display: none; }
+.nav-services summary::after { content: "▾"; margin-left: 6px; font-size: 11px; }
+.nav-services[open] summary,.nav-services summary:hover { color: #ff8b8e; }
+.nav-services-menu { position: absolute; z-index: 20; top: calc(100% + 14px); left: -14px; display: grid; min-width: 185px; padding: 6px; border: 1px solid #3c3d42; border-radius: 9px; background: #1c1c1f; box-shadow: 0 12px 28px #0003; }
+.nav-services-menu a { padding: 11px 10px; border-radius: 5px; }
+.nav-services-menu a:hover { background: #303136; }
 .page-wrap { width: min(1180px, calc(100% - 40px)); margin: 38px auto 70px; }
 .hero { margin: 0 0 26px; padding: 24px 0 8px; }
 .hero h1,.form-heading h1 { margin: 8px 0; font-size: clamp(30px, 5vw, 46px); letter-spacing: -.035em; }
@@ -32,6 +42,9 @@ a { color: inherit; }
 .field { display: grid; min-width: 0; gap: 7px; color: #4b4e58; font-size: 13px; font-weight: 650; }
 .field-wide { grid-column: span 2; }
 .field input,.field select,.field textarea,.vehicle-form input,.vehicle-form select,.vehicle-form textarea { width: 100%; min-height: 44px; padding: 10px 12px; border: 1px solid #d9dae0; border-radius: 9px; outline: 0; background: #fff; color: var(--ink); font: inherit; font-size: 14px; }
+.currency-input { position: relative; display: block; }
+.currency-input>span { position: absolute; top: 50%; left: 13px; color: var(--muted); transform: translateY(-50%); }
+.currency-input input { padding-left: 30px; }
 .field textarea { min-height: 120px; resize: vertical; }
 .field input:focus,.field select:focus,.field textarea:focus { border-color: var(--red); box-shadow: 0 0 0 3px #bd292e18; }
 .filter-actions,.form-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 18px; }
@@ -40,6 +53,7 @@ a { color: inherit; }
 .button-red:hover { transform: translateY(-1px); background: var(--red-dark); }
 .button-light { border-color: var(--line); background: #fff; color: var(--ink); }
 .button-light:hover { background: #f7f7f8; }
+.admin-edit-link { margin-left: 8px; }
 .inventory-section { margin-top: 42px; }
 .section-heading,.page-title-row { display: flex; align-items: end; justify-content: space-between; gap: 18px; margin-bottom: 18px; }
 .section-heading h2,.page-title-row h1 { margin: 5px 0 0; font-size: 28px; }
@@ -70,9 +84,9 @@ a { color: inherit; }
 .back-link { display: inline-block; margin: 0 0 19px; color: #5e6069; font-size: 14px; text-decoration: none; }
 .back-link:hover { color: var(--red); }
 .form-errors,.field-error { color: #a32229; font-size: 13px; }
-.admin-page { min-height: 100vh; background: radial-gradient(circle at 8% 0%, #bd292e12, transparent 30rem), var(--paper); }
+.admin-page { min-height: 100vh; background: var(--paper); }
 .admin-wrap { width: min(1220px, calc(100% - 40px)); margin: 36px auto 68px; }
-.admin-welcome { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 30px; border-radius: 17px; background: linear-gradient(120deg, #23242a, #41434c); color: #fff; box-shadow: 0 13px 30px #20212724; }
+.admin-welcome { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 30px; border-radius: 17px; background: #292a30; color: #fff; box-shadow: 0 13px 30px #20212724; }
 .admin-welcome h1 { margin: 7px 0; font-size: clamp(26px, 4vw, 36px); }
 .admin-welcome p:not(.eyebrow) { margin-bottom: 0; color: #d8d9dd; }
 .admin-welcome .eyebrow { color: #ffb7b9; }
@@ -88,7 +102,7 @@ a { color: inherit; }
 .card-heading>a { color: var(--red); font-size: 13px; font-weight: 700; text-decoration: none; }
 .sales-chart { height: 220px; display: flex; align-items: stretch; justify-content: space-around; gap: 12px; padding: 12px 8px 0; }
 .chart-day { display: flex; flex: 1; flex-direction: column; align-items: center; justify-content: flex-end; gap: 8px; color: var(--muted); font-size: 12px; }
-.chart-bar { width: min(42px, 75%); height: var(--bar-height); min-height: 4px; border-radius: 8px 8px 2px 2px; background: linear-gradient(180deg, #df696d, var(--red-dark)); }
+.chart-bar { width: min(42px, 75%); height: var(--bar-height); min-height: 4px; border-radius: 8px 8px 2px 2px; background: var(--red); }
 .quick-actions>a { display: flex; align-items: center; gap: 12px; margin-top: 11px; padding: 12px; border: 1px solid var(--line); border-radius: 11px; text-decoration: none; transition: .18s; }
 .quick-actions>a:hover { border-color: #ddb3b5; background: #fffafa; }
 .quick-actions>a>span:nth-child(2) { display: grid; flex: 1; gap: 4px; }
@@ -134,6 +148,10 @@ th { color: var(--muted); font-size: 12px; font-weight: 700; }
 .upload-drop input { width: auto; max-width: 100%; min-height: auto; padding: 0; border: 0; }
 .photo-preview { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px; margin-top: 14px; }
 .photo-preview img { width: 100%; height: 100px; border-radius: 9px; object-fit: cover; }
+.new-photo-choice { display: grid; gap: 7px; padding: 7px; border: 1px solid var(--line); border-radius: 10px; background: #fff; }
+.existing-photo { display: grid; gap: 7px; padding: 7px; border: 1px solid var(--line); border-radius: 10px; background: #fff; }
+.photo-choice { display: flex; align-items: center; gap: 6px; color: var(--muted); font-size: 12px; }
+.photo-choice input { width: 15px; min-height: 15px; margin: 0; accent-color: var(--red); }
 .current-photos-label { margin: 16px 0 0; color: var(--muted); font-size: 13px; }
 .upload-hint,.commission-note { color: var(--muted); font-size: 13px; }
 .form-actions { margin-top: 24px; }
@@ -159,4 +177,130 @@ th { color: var(--muted); font-size: 12px; font-weight: 700; }
     .form-fields .field:last-child { grid-column: auto; }
     .page-title-row { align-items: flex-start; flex-direction: column; }
     .site-footer { flex-direction: column; }
+}
+
+/* Inicio público del concesionario */
+.brand { display: flex; align-items: center; gap: 10px; }
+.brand img { width: 76px; height: 38px; object-fit: contain; }
+.brand span { color: #fff; }
+.site-header { flex-wrap: wrap; }
+.home-hero { padding: 42px max(5vw, 22px) 28px; background: #222329; color: #fff; }
+.home-hero-copy { width: min(1180px, 100%); margin: 0 auto; padding: 18px 0 14px; }
+.home-hero-copy .eyebrow { color: #ff9b9e; }
+.home-hero-copy h1 { max-width: 780px; margin: 10px 0; font-size: clamp(34px, 5vw, 56px); line-height: 1.04; letter-spacing: -.045em; }
+.home-hero-copy>p:last-child { max-width: 610px; margin: 13px 0 0; color: #d5d5d9; font-size: 16px; line-height: 1.65; }
+.home-filter { width: min(1060px, 100%); margin: 18px auto 0; padding: 21px; }
+.category-links { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-bottom: 20px; }
+.category-link { min-height: 68px; display: flex; align-items: center; justify-content: center; gap: 10px; border: 1px solid #292a30; border-radius: 10px; background: #222329; color: #fff; font-weight: 750; text-decoration: none; transition: .18s ease; }
+.category-link:hover { transform: translateY(-2px); border-color: var(--red); background: #302226; }
+.category-symbol { width: 34px; height: 27px; fill: none; stroke: #ff757a; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+.categories-section,.home-inventory { width: min(1180px, calc(100% - 40px)); margin: 44px auto 0; }
+.interest-section { position: relative; width: min(1180px, calc(100% - 40px)); margin: 34px auto 0; }
+.interest-heading { display: flex; align-items: end; justify-content: space-between; margin-bottom: 20px; }
+.interest-heading h2 { margin: 0; font-size: 19px; font-weight: 500; text-transform: uppercase; }
+.interest-heading>div:first-child>span { display: block; width: 64px; height: 2px; margin-top: 10px; background: #1677e8; }
+.interest-controls { display: flex; gap: 8px; }
+.interest-controls button { width: 38px; height: 38px; border: 1px solid var(--line); border-radius: 50%; background: #fff; color: var(--ink); font-size: 25px; line-height: 1; cursor: pointer; }
+.interest-controls button:hover { border-color: var(--red); color: var(--red); }
+.interest-carousel { display: grid; grid-auto-columns: minmax(190px, 1fr); grid-auto-flow: column; gap: 24px; overflow-x: auto; padding: 4px 2px 12px; scroll-behavior: smooth; scrollbar-width: thin; }
+.interest-card { min-width: 0; color: var(--ink); text-align: center; text-decoration: none; text-transform: uppercase; }
+.interest-card img { display: block; width: 100%; height: 230px; object-fit: cover; background: #e8e9eb; }
+.interest-card span { display: block; padding: 12px 4px 4px; font-size: 14px; }
+.interest-card:hover span { color: var(--red); }
+.services-section { width: min(1180px, calc(100% - 40px)); margin: 54px auto 0; scroll-margin-top: 100px; }
+.services-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+.service-card { padding: 24px; border: 1px solid var(--line); border-radius: 13px; background: #fff; scroll-margin-top: 100px; }
+.service-number { color: var(--red); font-size: 12px; font-weight: 700; }
+.service-card h3 { margin: 9px 0; font-size: 20px; }
+.service-card p { min-height: 48px; color: var(--muted); line-height: 1.55; }
+.category-tiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.category-tiles a { display: grid; gap: 7px; padding: 20px; border: 1px solid var(--line); border-radius: 13px; background: #fff; text-decoration: none; transition: .18s ease; }
+.category-tiles a:hover { transform: translateY(-3px); border-color: #e8b7b9; box-shadow: 0 10px 24px #1c1c1c0d; }
+.category-tile-icon { width: 42px; height: 32px; fill: none; stroke: var(--red); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+.category-tiles strong { font-size: 17px; }
+.category-tiles small { color: var(--muted); font-size: 13px; }
+.home-inventory { margin-top: 48px; }
+.vehicle-category-section { margin: 28px 0 38px; scroll-margin-top: 96px; }
+.category-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 14px; margin-bottom: 14px; }
+.category-heading h3 { margin: 0; font-size: 22px; }
+.category-heading span { color: var(--muted); font-size: 13px; }
+.vehicle-photo { position: relative; }
+.vehicle-photo img { object-fit: contain; padding: 12px; background: #222329; }
+.photo-badge { position: absolute; top: 12px; left: 12px; padding: 6px 10px; border-radius: 999px; background: #1c1c1fe8; color: #fff; font-size: 11px; font-weight: 750; }
+.vehicle-info { min-height: 195px; display: flex; flex-direction: column; align-items: flex-start; }
+.vehicle-info h4 { margin: 0 0 5px; font-size: 18px; }
+.vehicle-meta { color: var(--muted); font-size: 13px; }
+.vehicle-price { margin-top: auto; font-size: 21px; }
+.vehicle-specs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); margin: 0 17px 17px; border-top: 1px solid var(--line); }
+.vehicle-specs>div { min-width: 0; padding: 10px 8px 9px 0; border-bottom: 1px solid var(--line); }
+.vehicle-specs dt { margin-bottom: 4px; color: var(--muted); font-size: 12px; }
+.vehicle-specs dd { margin: 0; color: var(--ink); font-size: 13px; font-weight: 600; overflow-wrap: anywhere; }
+.detail-characteristics { margin-top: 24px; padding: 24px; border: 1px solid var(--line); border-radius: 14px; background: #fff; }
+.detail-characteristics h2 { margin: 0; padding-bottom: 14px; border-bottom: 1px solid var(--line); font-size: 22px; text-transform: uppercase; }
+.detail-characteristics .vehicle-specs { margin: 0; border-top: 0; }
+.detail-characteristics .vehicle-specs>div { padding: 13px 12px 12px 0; }
+.finance-simulator { margin: 24px 0 48px; padding: 26px; border: 1px solid var(--line); border-radius: 14px; background: #fff; }
+.finance-simulator h2 { margin: 0 0 8px; font-size: 25px; text-transform: uppercase; }
+.finance-intro { margin: 0 0 22px; color: var(--muted); }
+.finance-grid { display: grid; grid-template-columns: 1.2fr 1fr; gap: 36px; align-items: center; }
+.finance-label,.term-selector legend,.down-payment-label { color: var(--muted); font-size: 14px; }
+.finance-label { margin: 0 0 4px; }
+.finance-car-price { display: block; margin-bottom: 22px; font-size: clamp(25px, 4vw, 34px); }
+.term-selector { margin: 0 0 22px; padding: 0; border: 0; }
+.term-selector legend { margin-bottom: 10px; }
+.term-options { display: flex; flex-wrap: wrap; gap: 8px; }
+.term-options button { min-width: 49px; padding: 8px 11px; border: 1px solid #cfd0d5; border-radius: 999px; background: #fff; color: var(--ink); cursor: pointer; }
+.term-options button.is-active,.term-options button:hover { border-color: #1c1c1f; background: #1c1c1f; color: #fff; }
+.down-payment-label { display: flex; justify-content: space-between; gap: 12px; margin-bottom: 7px; }
+.down-payment-label output { color: var(--ink); font-weight: 700; }
+#down-payment { width: 100%; accent-color: #1c1c1f; }
+.down-payment-percent { display: block; color: var(--muted); font-size: 13px; text-align: center; }
+.finance-result { display: grid; justify-items: center; gap: 10px; padding: 28px 18px; border: 1px solid var(--line); border-radius: 9px; box-shadow: 0 3px 8px #20212712; text-align: center; }
+.finance-result p { margin: 0; color: var(--muted); }
+.finance-result>strong { font-size: clamp(27px, 4vw, 36px); }
+.finance-result small { color: var(--muted); }
+.finance-result .button { margin-top: 6px; }
+.finance-disclaimer { max-width: 760px; margin: 20px 0 0; color: var(--muted); font-size: 12px; line-height: 1.6; }
+.card-more { display: flex; justify-content: space-between; width: 100%; margin-top: 13px; padding-top: 11px; border-top: 1px solid var(--line); color: var(--ink); font-size: 13px; font-weight: 750; }
+.card-more span { color: var(--red); font-size: 17px; }
+.category-empty { padding: 22px; border: 1px dashed #d6d7dc; border-radius: 12px; background: #fff; color: var(--muted); }
+.contact-promo { width: min(1180px, calc(100% - 40px)); display: flex; align-items: center; justify-content: space-between; gap: 28px; margin: 54px auto 68px; padding: 32px; border-radius: 17px; background: #292a30; color: #fff; }
+.contact-promo .eyebrow { color: #ffb7b9; }
+.contact-promo h2 { max-width: 670px; margin: 8px 0; font-size: clamp(23px, 3vw, 32px); }
+.contact-promo p:last-child { max-width: 700px; margin-bottom: 0; color: #d8d9dd; line-height: 1.6; }
+.contact-promo .button { flex-shrink: 0; }
+.empty-icon { display: block; color: var(--red); font-size: 42px; }
+
+@media (max-width: 760px) {
+    .site-header { justify-content: center; padding: 10px 16px; }
+    .site-nav { flex-wrap: wrap; justify-content: center; gap: 12px 18px; }
+    .home-hero { padding: 30px 18px 22px; }
+    .home-filter { padding: 15px; }
+    .filter-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .field-wide { grid-column: 1 / -1; }
+    .category-tiles { gap: 10px; }
+    .services-grid { grid-template-columns: 1fr; }
+    .category-tiles a { padding: 15px; }
+    .vehicle-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .finance-grid { grid-template-columns: 1fr; gap: 22px; }
+    .finance-simulator { padding: 20px; }
+    .contact-promo { align-items: flex-start; flex-direction: column; padding: 24px; }
+}
+
+@media (max-width: 520px) {
+    .brand { gap: 6px; font-size: 17px; }
+    .brand img { width: 58px; height: 30px; }
+    .site-nav { gap: 10px 14px; }
+    .site-nav a, .nav-button { font-size: 12px; }
+    .category-links { gap: 7px; }
+    .category-link { min-height: 62px; flex-direction: column; gap: 3px; font-size: 12px; }
+    .category-symbol { width: 29px; height: 23px; }
+    .category-tiles { grid-template-columns: 1fr; }
+    .categories-section, .home-inventory, .contact-promo { width: min(100% - 28px, 1180px); }
+    .home-inventory { margin-top: 34px; }
+    .vehicle-grid { grid-template-columns: 1fr; }
+    .vehicle-photo { height: 210px; }
+    .filter-actions { justify-content: stretch; }
+    .filter-actions .button { flex: 1; padding: 0 10px; }
+    .section-heading h2 { font-size: 23px; }
 }
